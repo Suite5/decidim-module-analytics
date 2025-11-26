@@ -24,7 +24,9 @@ module Decidim
                     icon_name: "pie-chart",
                     position: 7.2,
                     active: :inclusive,
-                    if: allowed_to?(:update, :organization, organization: current_organization) and Rails.application.secrets.dig(:matomo, :enabled)
+                    if: allowed_to?(:update, :organization, organization: current_organization) && 
+                        ENV["MATOMO_SERVER_ADDRESS"].present? && 
+                        ENV["MATOMO_TOKEN_AUTH"].present?
         end
       end
     end

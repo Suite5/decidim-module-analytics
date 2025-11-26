@@ -1,13 +1,22 @@
-<% if Rails.application.secrets.dig(:matomo, :enabled) %>
-  <script type="text/javascript">
+<%# 1. Fetch variables safely %>
+<% matomo_url = ENV.fetch("MATOMO_SERVER_ADDRESS", nil) %>
+<% matomo_site_id = ENV.fetch("MATOMO_SITE_ID", nil) %>
+
+<%# 2. Check if Matomo is actually configured %>
+<% if matomo_url.present? && matomo_site_id.present? %>
+
+  <%# 3. Ensure the URL ends with a slash %>
+  <% final_url = matomo_url.end_with?('/') ? matomo_url : "#{matomo_url}/" %>
+
+  <script type="text/javascript" nonce="<%= request.content_security_policy_nonce %>">
     var _paq = window._paq || [];
     /* tracker methods like "setCustomDimension" should be called before "trackPageView" */
     _paq.push(['trackPageView']);
     _paq.push(['enableLinkTracking']);
     (function() {
-      var u="<%= Rails.application.secrets.dig(:matomo, :server_address) %>";
+      var u="<%= final_url %>"; 
       _paq.push(['setTrackerUrl', u+'matomo.php']);
-      _paq.push(['setSiteId', '<%= Rails.application.secrets.dig(:matomo, :site_id) %>']);
+      _paq.push(['setSiteId', '<%= matomo_site_id %>']);
       var d=document, g=d.createElement('script'), s=d.getElementsByTagName('script')[0];
       g.type='text/javascript'; g.async=true; g.defer=true; g.src=u+'matomo.js'; s.parentNode.insertBefore(g,s);
     })();

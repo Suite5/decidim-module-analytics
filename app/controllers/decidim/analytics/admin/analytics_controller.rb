@@ -6,9 +6,9 @@ module Decidim
       class AnalyticsController < Analytics::Admin::ApplicationController
 
         def index
-          @server_address = Rails.application.secrets.dig(:matomo, :server_address)
-          @site_id = Rails.application.secrets.dig(:matomo, :site_id)
-          @token_auth = Rails.application.secrets.dig(:matomo, :token_auth)
+          @server_address = ENV.fetch("MATOMO_SERVER_ADDRESS", nil)
+          @site_id = ENV.fetch("MATOMO_SITE_ID", nil)
+          @token_auth = ENV.fetch("MATOMO_TOKEN_AUTH", nil)
         end
       end
     end
